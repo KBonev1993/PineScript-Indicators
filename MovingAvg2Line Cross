@@ -1,0 +1,30 @@
+//@version=5
+indicator("MovingAvg2Line Cross", overlay=true)
+
+// Define Inputs
+fastLength = input.int(10, "Fast Length", minval=1)
+slowLength = input.int(20, "Slow Length", minval=1)
+
+// Calculate Moving Averages
+fastMA = ta.sma(close, fastLength)
+slowMA = ta.sma(close, slowLength)
+
+// Determine Buy and Sell Signals
+buySignal = ta.crossover(fastMA, slowMA)
+sellSignal = ta.crossunder(fastMA, slowMA)
+stopLoss = close * 0.95
+
+// Determine Take Profit Signals
+buyTP = fastMA + (fastMA - slowMA)
+sellTP = fastMA - (fastMA - slowMA)
+
+// Plot Moving Averages and Signals
+plot(fastMA, color=color.blue, linewidth=2, title="Fast Moving Average")
+plot(slowMA, color=color.red, linewidth=2, title="Slow Moving Average")
+plotshape(buySignal, style=shape.triangleup, location=location.belowbar, color=color.green, text="Buy Signal")
+plotshape(sellSignal, style=shape.triangledown, location=location.abovebar, color=color.red, text="Sell Signal")
+
+// Plot Stop Loss and Take Profit Signals
+plot(stopLoss, color=color.orange, linewidth=2, style=plot.style_linebr, title="Stop Loss")
+plot(buyTP, style=plot.style_line, color=color.green, linewidth=2, title="Buy Take Profit")
+plot(sellTP, style=plot.style_line, color=color.red, linewidth=2, title="Sell Take Profit")
