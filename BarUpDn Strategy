@@ -1,0 +1,13 @@
+//@version=5
+indicator("BarUpDn Strategy", overlay=true)
+
+// Calculate Close Price Change
+change = close - close[1]
+
+// Determine Buy and Sell Signals
+buySignal = change > 0
+sellSignal = change < 0
+
+// Plot Signals
+plotshape(buySignal, style=shape.triangleup, location=location.belowbar, color=color.green, text="Buy Signal")
+plotshape(sellSignal, style=shape.triangledown, location=location.abovebar, color=color.red, text="Sell Signal")
