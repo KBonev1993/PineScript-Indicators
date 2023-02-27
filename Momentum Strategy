@@ -1,0 +1,31 @@
+//@version=5
+indicator("Momentum Strategy", overlay=true)
+
+// Define Inputs
+momentumPeriod = input.int(10, "Momentum Period", minval=1)
+overbought = input.int(70, "Overbought Level", minval=0, maxval=100)
+oversold = input.int(30, "Oversold Level", minval=0, maxval=100)
+
+// Calculate Momentum
+momentum = close - ta.sma(close, momentumPeriod)
+
+// Determine Buy and Sell Signals
+buySignal = momentum < -oversold
+sellSignal = momentum > overbought
+stopLoss = close * 0.95
+
+// Determine Take Profit Signals
+buyTP = close - momentum
+sellTP = close + momentum
+
+// Plot Momentum and Signals
+plot(momentum, color=color.blue, linewidth=2, title="Momentum")
+hline(overbought, color=color.red, linestyle=hline.style_dashed, title="Overbought")
+hline(oversold, color=color.green, linestyle=hline.style_dashed, title="Oversold")
+plotshape(buySignal, style=shape.triangleup, location=location.belowbar, color=color.green, text="Buy Signal")
+plotshape(sellSignal, style=shape.triangledown, location=location.abovebar, color=color.red, text="Sell Signal")
+
+// Plot Stop Loss and Take Profit Signals
+plot(stopLoss, color=color.orange, linewidth=2, style=plot.style_linebr, title="Stop Loss")
+plot(buyTP, style=plot.style_line, color=color.green, linewidth=2, title="Buy Take Profit")
+plot(sellTP, style=plot.style_line, color=color.red, linewidth=2, title="Sell Take Profit")
