@@ -1,0 +1,23 @@
+//@version=5
+indicator("Consecutive Up/Down Strategy", overlay=true)
+
+// Inputs
+n = input.int(3, "Number of Consecutive Days", minval=1)
+buyColor = input(color.blue, title="Buy Color")
+sellColor = input(color.red, title="Sell Color")
+
+// Count Consecutive Up Days
+upDays = 0.0
+upDays := close > close[1] ? upDays + 1 : 0
+
+// Count Consecutive Down Days
+dnDays = 0.0
+dnDays := close < close[1] ? dnDays + 1 : 0
+
+// Determine Buy and Sell Signals
+buySignal = upDays >= n
+sellSignal = dnDays >= n
+
+// Plot Signals
+plotshape(buySignal, style=shape.triangleup, location=location.belowbar, color=buyColor, text="Buy Signal")
+plotshape(sellSignal, style=shape.triangledown, location=location.abovebar, color=sellColor, text="Sell Signal")
