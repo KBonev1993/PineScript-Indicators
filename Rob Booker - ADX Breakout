@@ -1,0 +1,33 @@
+//@version=5
+indicator("Rob Booker - ADX Breakout", overlay=true)
+
+// ADX Inputs
+adxLength = input.int(14, "ADX Length", minval=1)
+adxThreshold = input.int(25, "ADX Threshold", minval=1)
+
+// Calculate ADX
+adx = ta.adx(high, low, close, adxLength)
+
+// Determine Trend Direction
+trendUp = ta.crossover(adx, adxThreshold)
+trendDown = ta.crossunder(adx, adxThreshold)
+
+// Determine Buy and Sell Signals
+buySignal = ta.crossover(high, high[1]) and trendUp
+sellSignal = ta.crossunder(low, low[1]) and trendDown
+stopLoss = low[1]
+
+// Determine Take Profit Signals
+buyTP = high + 2 * (high[1] - low[1])
+sellTP = low - 2 * (high[1] - low[1])
+
+// Plot ADX and Signals
+plot(adx, color=color.blue, linewidth=2)
+plot(adxThreshold, color=color.green, linewidth=2, title="ADX Threshold")
+plotshape(buySignal, style=shape.triangleup, location=location.belowbar, color=color.green, text="Buy Signal")
+plotshape(sellSignal, style=shape.triangledown, location=location.abovebar, color=color.red, text="Sell Signal")
+plot(stopLoss, color=color.orange, linewidth=2, style=plot.style_linebr, title="Stop Loss")
+
+// Plot Take Profit Signals
+plot(buyTP, style=plot.style_line, color=color.green, linewidth=2, title="Buy Take Profit")
+plot(sellTP, style=plot.style_line, color=color.red, linewidth=2, title="Sell Take Profit")
