@@ -1,0 +1,28 @@
+//@version=5
+indicator("Keltner Channels Strategy", overlay=true)
+
+// Inputs
+length = input.int(20, "Length", minval=1)
+multiplier = input.float(2, "Multiplier", minval=0.001, maxval=50)
+buyColor = input(color.blue, title="Buy Color")
+sellColor = input(color.red, title="Sell Color")
+
+// Calculate Keltner Channels
+basis = ta.sma(close, length)
+dev = multiplier * ta.atr(length)
+upper = basis + dev
+lower = basis - dev
+
+// Determine Buy and Sell Signals
+buySignal = close < lower
+sellSignal = close > upper
+
+// Plot Keltner Channels and Signals
+plot(basis, color=color.blue, linewidth=2)
+plot(upper, color=color.green, linewidth=2)
+plot(lower, color=color.red, linewidth=2)
+plotshape(buySignal, style=shape.triangleup, location=location.belowbar, color=buyColor, text="Buy Signal")
+plotshape(sellSignal, style=shape.triangledown, location=location.abovebar, color=sellColor, text="Sell Signal")
+
+// Background Color Change on Signal
+bgcolor(buySignal ? buyColor : sellSignal ? sellColor : na)
