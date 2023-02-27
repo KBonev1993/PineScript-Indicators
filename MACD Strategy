@@ -1,0 +1,32 @@
+//@version=5
+indicator("MACD Strategy", overlay=true)
+
+// Inputs
+fastLength = input.int(12, "Fast Length", minval=1)
+slowLength = input.int(26, "Slow Length", minval=1)
+signalLength = input.int(9, "Signal Length", minval=1)
+buyColor = input(color.blue, title="Buy Color")
+sellColor = input(color.red, title="Sell Color")
+
+// Calculate MACD and Signal Line
+[macdLine, signalLine, _] = ta.macd(close, fastLength, slowLength, signalLength)
+
+// Determine Buy and Sell Signals
+buySignal = ta.crossover(macdLine, signalLine)
+sellSignal = ta.crossunder(macdLine, signalLine)
+
+// Plot MACD, Signal Line, and Signals
+plot(macdLine, color=color.green, linewidth=2, title="MACD Line")
+plot(signalLine, color=color.red, linewidth=2, title="Signal Line")
+plotshape(buySignal, style=shape.triangleup, location=location.belowbar, color=color.green, text="Buy Signal")
+plotshape(sellSignal, style=shape.triangledown, location=location.abovebar, color=color.red, text="Sell Signal")
+
+// Determine Stop Loss and Take Profit Signals
+stopLoss = close * 0.95
+buyTP = close + (macdLine - signalLine) * 2
+sellTP = close - (macdLine - signalLine) * 2
+
+// Plot Stop Loss and Take Profit Signals
+plot(stopLoss, color=color.orange, linewidth=2, style=plot.style_linebr, title="Stop Loss")
+plot(buyTP, style=plot.style_line, color=color.green, linewidth=2, title="Buy Take Profit")
+plot(sellTP, style=plot.style_line, color=color.red, linewidth=2, title="Sell Take Profit")
