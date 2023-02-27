@@ -1,0 +1,32 @@
+//@version=5
+indicator("Pivot Extension Strategy", overlay=true)
+
+// Pivot Points Inputs
+pivotType = input.string("Standard", "Pivot Type", options=["Standard", "Fibonacci", "Woodie", "DeMark", "Camarilla"])
+
+// Define Pivot Points
+pp = pivot(pivotType)
+
+// Pivot Extension Inputs
+length = input.int(20, "Length", minval=1)
+mult = input.float(1.618, "Multiplier", minval=0.001, maxval=50)
+
+// Calculate Pivot Extension Levels
+highPivot = pp[1]
+lowPivot = pp[2]
+rangePivot = highPivot - lowPivot
+extHigh1 = highPivot + mult * rangePivot
+extHigh2 = highPivot + 1.272 * rangePivot
+extHigh3 = highPivot + 1.618 * rangePivot
+extLow1 = lowPivot - mult * rangePivot
+extLow2 = lowPivot - 1.272 * rangePivot
+extLow3 = lowPivot - 1.618 * rangePivot
+
+// Plot Pivot Points and Extension Levels
+plot(pp, color=color.blue, linewidth=2, title="Pivot Points")
+plot(extHigh1, color=color.green, linewidth=2, title="High Pivot Extension 1")
+plot(extHigh2, color=color.green, linewidth=2, title="High Pivot Extension 2")
+plot(extHigh3, color=color.green, linewidth=2, title="High Pivot Extension 3")
+plot(extLow1, color=color.red, linewidth=2, title="Low Pivot Extension 1")
+plot(extLow2, color=color.red, linewidth=2, title="Low Pivot Extension 2")
+plot(extLow3, color=color.red, linewidth=2, title="Low Pivot Extension 3")
