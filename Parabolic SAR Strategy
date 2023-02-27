@@ -1,0 +1,24 @@
+//@version=5
+strategy("Parabolic SAR Strategy", overlay=true)
+
+// Inputs
+step = input(title="Step", type=input.float, defval=0.02)
+maxStep = input(title="Max Step", type=input.float, defval=0.2)
+
+// Calculate Parabolic SAR
+[sar, trend] = ta.sar(high, low, step, maxStep)
+
+// Determine Buy and Sell Signals
+buySignal = voltyExpClose > 1.5 * ta.sma(voltyExpClose, 50)
+sellSignal = voltyExpClose < 0.5 * ta.sma(voltyExpClose, 50)
+
+// Place Orders
+if buySignal
+strategy.entry("Buy", strategy.long)
+if sellSignal
+strategy.entry("Sell", strategy.short)
+
+// Plot Volty Exp Close and Signals
+plot(voltyExpClose, color=color.purple, linewidth=2, title="Volty Exp Close")
+plotshape(buySignal, style=shape.triangleup, location=location.belowbar, color=color.green, text="Buy Signal")
+plotshape(sellSignal, style=shape.triangledown, location=location.abovebar, color=color.red, text="Sell Signal")
