@@ -1,0 +1,36 @@
+//@version=5
+indicator("Volty Expan Close", overlay=true)
+
+// Define Input Parameters
+atrLength = input.int(10, "ATR Length", minval=1, group="ATR Settings")
+multiplier = input.float(1.5, "Multiplier", minval=0.001, group="ATR Settings")
+atrStopLength = input.int(10, "ATR Stop Length", minval=1, group="ATR Settings")
+useSmoothedAtr = input.bool(false, "Use Smoothed ATR?", group="ATR Settings")
+smoothedAtrLength = input.int(14, "Smoothed ATR Length", minval=1, group="ATR Settings")
+showTrades = input.bool(true, "Show Trades?", group="Settings")
+
+// Calculate Volatility-Based Stop
+tr = ta.tr(true)
+atr = useSmoothedAtr ? ta.sma(tr, smoothedAtrLength) : ta.atr(tr, atrLength)
+voltyStop = multiplier * atr
+
+// Calculate Stop and Target Levels
+longStop = ta.lowest(close - voltyStop, atrStopLength)
+shortStop = ta.highest(close + voltyStop, atrStopLength)
+target = ta.ema(close, 20)
+
+// Calculate Trading Signals
+longSignal = close > longStop
+shortSignal = close < shortStop
+exitSignal = close > target
+
+// Plot the Stop and Target Levels
+plot(longStop, color=color.green, linewidth=2, title="Long Stop")
+plot(shortStop, color=color.red, linewidth=2, title="Short Stop")
+plot(target, color=color.blue, linewidth=2, title="Target")
+
+// Plot the Trading Signals
+if showTrades
+plotshape(longSignal ? longStop : na, style=shape.triangleup, location=location.belowbar, color=color.green, text="Long")
+plotshape(shortSignal ? shortStop : na, style=shape.triangledown, location=location.abovebar, color=color.red, text="Short")
+plotshape(exitSignal ? target : na, style=shape.circle, location=location.top, color=color.blue, text="Exit")
