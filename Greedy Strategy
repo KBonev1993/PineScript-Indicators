@@ -1,0 +1,25 @@
+//@version=5
+indicator("Greedy Strategy", overlay=true)
+
+// Inputs
+fastLength = input.int(10, "Fast Length", minval=1)
+slowLength = input.int(30, "Slow Length", minval=1)
+buyColor = input(color.blue, title="Buy Color")
+sellColor = input(color.red, title="Sell Color")
+
+// Calculate Fast and Slow Moving Averages
+fastMA = ta.sma(close, fastLength)
+slowMA = ta.sma(close, slowLength)
+
+// Determine Buy and Sell Signals
+buySignal = ta.crossover(fastMA, slowMA)
+sellSignal = ta.crossunder(fastMA, slowMA)
+
+// Plot Moving Averages and Signals
+plot(fastMA, color=color.green, linewidth=2, title="Fast MA")
+plot(slowMA, color=color.red, linewidth=2, title="Slow MA")
+plotshape(buySignal, style=shape.triangleup, location=location.belowbar, color=buyColor, text="Buy Signal")
+plotshape(sellSignal, style=shape.triangledown, location=location.abovebar, color=sellColor, text="Sell Signal")
+
+// Background Color Change on Signal
+bgcolor(buySignal ? buyColor : sellSignal ? sellColor : na)
