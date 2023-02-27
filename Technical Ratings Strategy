@@ -1,0 +1,23 @@
+//@version=5
+indicator("Technical Ratings", overlay=false)
+
+// User Inputs
+emaLength = input.int(9, "EMA Length", minval=1, maxval=200)
+smaLength = input.int(20, "SMA Length", minval=1, maxval=200)
+rsiLength = input.int(14, "RSI Length", minval=1, maxval=200)
+adxLength = input.int(14, "ADX Length", minval=1, maxval=200)
+atrLength = input.int(14, "ATR Length", minval=1, maxval=200)
+
+// Calculate Technical Ratings
+ema = ta.ema(close, emaLength)
+sma = ta.sma(close, smaLength)
+rsi = ta.rsi(close, rsiLength)
+adx = ta.adx(high, low, close, adxLength)
+atr = ta.atr(high, low, close, atrLength)
+
+// Plot Technical Ratings
+plot(ema, color=color.green, linewidth=2, title="EMA")
+plot(sma, color=color.blue, linewidth=2, title="SMA")
+plot(rsi, color=color.red, linewidth=2, title="RSI")
+plot(adx, color=color.purple, linewidth=2, title="ADX")
+plot(atr, color=color.orange, linewidth=2, title="ATR")
