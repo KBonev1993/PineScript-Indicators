@@ -1,0 +1,26 @@
+//@version=5
+indicator("Supertrend", overlay=true)
+
+// User Inputs
+factor = input.int(10, "Factor", minval=1, maxval=100)
+multiplier = input.float(3, "Multiplier", step=0.1, minval=0.1, maxval=10)
+
+// Calculate Supertrend
+upperBasic = (high + low) / 2 + multiplier * atr(factor)
+lowerBasic = (high + low) / 2 - multiplier * atr(factor)
+trend = close > lowerBasic[1] ? 1 : close < upperBasic[1] ? -1 : nz(trend[1], 1)
+upperLevel = trend == 1 ? upperBasic : na
+lowerLevel = trend == -1 ? lowerBasic : na
+
+// Plot Supertrend
+plot(upperLevel, color=color.green, linewidth=2, title="Upper Level")
+plot(lowerLevel, color=color.red, linewidth=2, title="Lower Level")
+plot(close, color=color.blue, title="Price")
+
+// Determine Buy and Sell Signals
+buySignal = ta.crossover(close, lowerLevel)
+sellSignal = ta.crossunder(close, upperLevel)
+
+// Plot Buy and Sell Signals
+plotshape(buySignal, style=shape.triangleup, location=location.belowbar, color=color.green, text="Buy Signal")
+plotshape(sellSignal, style=shape.triangledown, location=location.abovebar, color=color.red, text="Sell Signal")
