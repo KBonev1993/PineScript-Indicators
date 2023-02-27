@@ -1,0 +1,39 @@
+//@version=5
+strategy("Outside Bar Strategy", overlay=true)
+
+// Inputs
+outsideBar = input(title="Outside Bar", type=input.bool, defval=true)
+lookBack = input(title="Look Back Period", type=input.integer, defval=3)
+entryBuffer = input(title="Entry Buffer (in ticks)", type=input.integer, defval=10)
+stopLoss = input(title="Stop Loss (in ticks)", type=input.integer, defval=20)
+takeProfit = input(title="Take Profit (in ticks)", type=input.integer, defval=30)
+
+// Calculate Outside Bar
+outHigh = ta.highest(high, lookBack)
+outLow = ta.lowest(low, lookBack)
+outsideBarCond = high > outHigh and low < outLow
+
+// Determine Buy and Sell Signals
+buySignal = outsideBar and ta.crossover(close, outHigh) and outsideBarCond
+sellSignal = outsideBar and ta.crossunder(close, outLow) and outsideBarCond
+
+// Calculate Entry Price, Stop Loss, and Take Profit
+entryPrice = 0.0
+if buySignal
+entryPrice := outHigh + entryBuffer
+stopLoss := entryPrice - stopLoss
+takeProfit := entryPrice + takeProfit
+if sellSignal
+entryPrice := outLow - entryBuffer
+stopLoss := entryPrice + stopLoss
+takeProfit := entryPrice - takeProfit
+
+// Place Orders
+if buySignal
+strategy.entry("Buy", strategy.long, qty=1, stop=stopLoss, limit=takeProfit)
+if sellSignal
+strategy.entry("Sell", strategy.short, qty=1, stop=stopLoss, limit=takeProfit)
+
+// Plot Outside Bar
+plot(outHigh, color=color.green, linewidth=2)
+plot(outLow, color=color.red, linewidth=2)
