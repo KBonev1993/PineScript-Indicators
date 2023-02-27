@@ -1,0 +1,25 @@
+//@version=5
+indicator("ChannelBreakOutStrategy", overlay=true)
+
+// Donchian Channel Inputs
+length = input.int(20, "Length", minval=1)
+
+// Calculate Donchian Channel
+upper = ta.highest(high, length)
+lower = ta.lowest(low, length)
+
+// Determine Buy and Sell Signals
+buySignal = close > upper
+sellSignal = close < lower
+stopLoss = lower
+
+// Determine Take Profit Signals
+buyTP = na
+sellTP = na
+
+// Plot Donchian Channel and Signals
+plot(upper, color=color.green, linewidth=2)
+plot(lower, color=color.red, linewidth=2)
+plotshape(buySignal, style=shape.triangleup, location=location.belowbar, color=color.green, text="Buy Signal")
+plotshape(sellSignal, style=shape.triangledown, location=location.abovebar, color=color.red, text="Sell Signal")
+plot(stopLoss, color=color.orange, linewidth=2, style=plot
